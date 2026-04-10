@@ -341,7 +341,7 @@ document.getElementById('submitBtn').addEventListener('click',()=>{
     role:                 document.getElementById('role').value,
     has_baby_section:     document.getElementById('hasSection').value,
     message:              document.getElementById('message').value.trim(),
-    _subject:             '🟡 Nouveau prospect pharmacie — '+nm,
+    subject:              '🟡 Nouveau prospect pharmacie — '+nm,
     _replyto:             eEl.value.trim(),
   };
   fetch('https://formspree.io/f/xgopjlkn',{
@@ -353,13 +353,14 @@ document.getElementById('submitBtn').addEventListener('click',()=>{
     const status=r.status;
     return r.text().then(txt=>{
       if(status<500){
-        // Apps Script : form-encoded requis en mode no-cors
-        const fd = new FormData();
-        Object.entries(payload).forEach(([k,v]) => fd.append(k, v||''));
-        fetch('https://script.google.com/macros/s/AKfycbxtUFzqbyYR1cKV7hNhy75mdapdan6gob6LH20XyQvGWxp22Hhwr_TGRnMZ4HxGdlSLtg/exec',{
-          method:'POST',
-          mode:'no-cors',
-          body:fd
+        // Apps Script : GET avec query string — seul moyen fiable en no-cors
+        const qs = Object.entries(payload)
+          .filter(([k]) => !k.startsWith('_') && k !== 'subject')
+          .map(([k,v]) => encodeURIComponent(k)+'='+encodeURIComponent(v||''))
+          .join('&');
+        fetch('https://script.google.com/macros/s/AKfycbxtUFzqbyYR1cKV7hNhy75mdapdan6gob6LH20XyQvGWxp22Hhwr_TGRnMZ4HxGdlSLtg/exec?'+qs,{
+          method:'GET',
+          mode:'no-cors'
         });
       }
       if(status>=200&&status<300||txt.includes('"ok"')){
