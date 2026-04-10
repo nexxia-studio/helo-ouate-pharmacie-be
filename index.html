@@ -329,35 +329,45 @@ document.getElementById('submitBtn').addEventListener('click',()=>{
   const btn=document.getElementById('submitBtn');
   btn.disabled=true;btn.textContent='Envoi en cours\u2026';
   const nm=document.getElementById('pharmacyName').value;
+  const payload={
+    pharmacy_name:        nm,
+    pharmacy_address:     document.getElementById('pharmacyAddress').value,
+    pharmacy_postal_code: document.getElementById('pharmacyPostalCode').value,
+    pharmacy_city:        document.getElementById('pharmacyCity').value,
+    first_name:           document.getElementById('firstName').value.trim(),
+    last_name:            document.getElementById('lastName').value.trim(),
+    email:                eEl.value.trim(),
+    phone:                pEl.value.trim(),
+    role:                 document.getElementById('role').value,
+    has_baby_section:     document.getElementById('hasSection').value,
+    message:              document.getElementById('message').value.trim(),
+    _subject:             '\\uD83D\\uDFE1 Nouveau prospect pharmacie \\u2014 '+nm,
+    _replyto:             eEl.value.trim(),
+  };
   fetch('https://formspree.io/f/xgopjlkn',{
     method:'POST',
     headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify({
-      pharmacy_name:nm,
-      pharmacy_address:document.getElementById('pharmacyAddress').value,
-      pharmacy_postal_code:document.getElementById('pharmacyPostalCode').value,
-      pharmacy_city:document.getElementById('pharmacyCity').value,
-      first_name:document.getElementById('firstName').value.trim(),
-      last_name:document.getElementById('lastName').value.trim(),
-      email:eEl.value.trim(),
-      phone:pEl.value.trim(),
-      role:document.getElementById('role').value,
-      has_baby_section:document.getElementById('hasSection').value,
-      message:document.getElementById('message').value.trim(),
-      _subject:'\uD83D\uDFE1 Nouveau prospect pharmacie \u2014 '+nm,
-      _replyto:eEl.value.trim()
-    })
+    body:JSON.stringify(payload),
   })
   .then(r=>{
-    if(r.ok||r.status===0){
-      fetch('https://script.google.com/macros/s/AKfycbxtUFzqbyYR1cKV7hNhy75mdapdan6gob6LH20XyQvGWxp22Hhwr_TGRnMZ4HxGdlSLtg/exec',{
-        method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-      });
-      document.getElementById('formContent').style.display='none';
-      document.getElementById('successScreen').style.display='block';
-    } else{btn.disabled=false;btn.textContent='Envoyer ma demande \\u2192';alert('Une erreur est survenue. Veuillez r\\u00e9essayer ou contacter info@helocosmetics.com')}
+    const status=r.status;
+    return r.text().then(txt=>{
+      if(status<500){
+        fetch('https://script.google.com/macros/s/AKfycbxtUFzqbyYR1cKV7hNhy75mdapdan6gob6LH20XyQvGWxp22Hhwr_TGRnMZ4HxGdlSLtg/exec',{
+          method:'POST',mode:'no-cors',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+      }
+      if(status>=200&&status<300||txt.includes('"ok"')){
+        document.getElementById('formContent').style.display='none';
+        document.getElementById('successScreen').style.display='block';
+      } else{
+        btn.disabled=false;
+        btn.textContent='Envoyer ma demande \\u2192';
+        alert('Erreur ('+status+'). Veuillez r\\u00e9essayer ou contacter info@helocosmetics.com');
+      }
+    });
   })
   .catch(()=>{btn.disabled=false;btn.textContent='Envoyer ma demande \\u2192';alert('Erreur r\\u00e9seau. Veuillez r\\u00e9essayer ou contacter info@helocosmetics.com')});
 });
