@@ -81,12 +81,22 @@
     },
     {
       "@context": "https://schema.org",
-      "@type": "Product",
-      "name": "Gamme cosm\u00e9tiques Ouate &mdash; 0 \u00e0 12 ans",
-      "brand": { "@type": "Brand", "name": "Ouate Le Touquet-Paris-Plage" },
-      "description": "Soins certifi\u00e9s pour b\u00e9b\u00e9s et enfants de 0 \u00e0 12 ans, sans ingr\u00e9dients controvers\u00e9s. Distribu\u00e9s en Belgique et au Luxembourg par HElo Cosmetics.",
-      "audience": { "@type": "PeopleAudience", "suggestedMinAge": 0, "suggestedMaxAge": 12 },
-      "offers": { "@type": "Offer", "availability": "https://schema.org/InStoreOnly", "areaServed": ["BE","LU"], "seller": { "@type": "Organization", "name": "HElo Cosmetics" } }
+      "@type": "Service",
+      "name": "Programme revendeur Ouate Paris — Pharmacies Belgique & Luxembourg",
+      "provider": {
+        "@type": "Organization",
+        "name": "HElo Cosmetics",
+        "url": "https://ouate-paris.be"
+      },
+      "areaServed": [
+        { "@type": "Country", "name": "Belgique" },
+        { "@type": "Country", "name": "Luxembourg" }
+      ],
+      "description": "Programme de partenariat revendeur pour pharmacies en Belgique et au Luxembourg. Distribution officielle de la gamme Ouate Paris — soins naturels pour enfants de 0 à 12 ans.",
+      "audience": {
+        "@type": "BusinessAudience",
+        "audienceType": "Pharmacies"
+      }
     },
     {
       "@context": "https://schema.org",
